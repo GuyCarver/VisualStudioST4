@@ -1,0 +1,7 @@
+{
+	"version" : "16.0",
+	"showbreakpoints" : true,
+	"detect_slow_plugins": false,
+	"bpointoncolor" : "red",
+	"bpointoffcolor" : "gray"
+}
