@@ -55,11 +55,7 @@ def plugin_loaded(  ) :
 def GetAllBreakpoints(  ):
   ''' Get array of all breakpoints with (filename, linenum) tuple. '''
   bps, cnt = dte.breakpoints()
-  breaks = []
-  for i in range(cnt):
-    fl, ln = dte.breakpoint(bps, i)
-    breaks.append((fl, ln))
-
+  breaks = [dte.breakpoint(bps, i) for i in range(cnt)]
   return breaks
 
 #--------------------------------------------------------
@@ -69,10 +65,10 @@ def GetBreakpoints( aView, aOn ) :
   breaks = []
   fname = format(aView.file_name()).lower()
   for i in range(cnt):
-    fl, ln = dte.enabledbreakpoint(bps, i, aOn)
-    if fl != None:
-      if fname == fl.lower():
-        breaks.append((i, ln))
+    data = dte.breakpoint(bps, i)
+    if (data.File != None) and (data.Enabled == aOn):
+      if fname == data.File.lower():
+        breaks.append(data)
   return breaks
 
 #--------------------------------------------------------
@@ -80,7 +76,7 @@ def ShowBreakpoints( aView, aList, aType, aColor ) :
   aView.erase_regions(aType)
   if aList :
     g = lambda line: aView.line(aView.text_point(line - 1, 0))
-    regs = [ g(brk[1]) for brk in aList ]
+    regs = [ g(brk.Line) for brk in aList ]
     aView.add_regions(aType, regs, aColor, "dot", sublime.HIDDEN)
 
 #--------------------------------------------------------
@@ -107,7 +103,7 @@ def SetFileAndLine( aView ) :
 class DteSelectBreakpointCommand( sublime_plugin.WindowCommand ) :
   def run( self ) :
     brks = GetAllBreakpoints()
-    brkdata = [ b[0] + ":" + str(b[1]) for b in brks ]
+    brkdata = [ b.File + ":" + str(b.Line) for b in brks ]
     self.window.show_quick_panel(brkdata, functools.partial(self.on_done, brkdata))
 
   #--------------------------------------------------------
