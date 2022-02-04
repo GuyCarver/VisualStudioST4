@@ -119,7 +119,7 @@ class DteToggleBreakpointCommand( sublime_plugin.TextCommand ) :
     # print("Setting file and line.")
     res = SetFileAndLine(self.view)
     if res:
-      print("ToggleBreakPoint")
+#      print("ToggleBreakPoint")
       dte.command("Debug.ToggleBreakPoint", "")
       # print("UpdatingBreakPoint")
       UpdateBreakpoints(self.view)
@@ -177,13 +177,13 @@ class DteCompilecppCommand( sublime_plugin.WindowCommand ) :
   def FindCompileFileName( self, vw ) :
     #This may be temporary.  Need to use a comment range perhaps?
     name = None
-    hr = vw.extract_scope(1)
+    hr = vw.extract_scope(4)  #We start at offset 4 to skip the // and get to the comment body, otherwise our range in only (0,2) for // and (0,3) for ///
     lt = vw.substr(hr)
 #    print("testing " + lt)
     match = compileFileName.search(lt)
     if (match != None) :
       name = match.group(1)
-#      print("Compile: " + name)
+      print("Compile: " + name)
 
     return name
 
