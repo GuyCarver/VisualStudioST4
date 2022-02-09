@@ -145,11 +145,11 @@ class DteSetFileLineCommand( sublime_plugin.TextCommand ) :
     # print("Setting fileandline")
     SetFileAndLine(self.view)
 
-compileFileName = re.compile("^.*Compile:[ \t]+([\w.]*).*", re.MULTILINE | re.IGNORECASE)
+#compileFileName = re.compile("^.*Compile:[ \t]+([\w.]*).*", re.MULTILINE | re.IGNORECASE)
 
 #--------------------------------------------------------
-#If on a secondary file attempt to find the main .cpp file to compile.  Either change filename extension to
-# .cpp or find the filename in the Compile: field of the file header.
+# This version simply opens the current file and expects the OpenOther extension
+# in VisualStudio to compile the correct file.
 class DteCompilecppCommand( sublime_plugin.WindowCommand ) :
   #--------------------------------------------------------
   def run( self ) :
@@ -158,34 +158,55 @@ class DteCompilecppCommand( sublime_plugin.WindowCommand ) :
       if vw.is_dirty():
         vw.run_command("save")
 
-      fname = self.FindCompileFileName(vw)
-      if not fname :
-        fname = vw.file_name()
+      fname = vw.file_name()
       #Get file name and make sure extension is .cpp.
       if fname :
-        fpath, fext = os.path.splitext(fname)
-        fname = fpath + '.cpp'
 #        print("opening " + fname)
         res = dte.command("File.OpenFile", fname)
         if res:
-          dte.command("Build.Compile", "")
+          res = dte.command("Tools.Compile.cpp", "")
         else:
-          print("Failed to compile " + fname)
+          print("Failed to open file", fname)
 
+#--------------------------------------------------------
+#If on a secondary file attempt to find the main .cpp file to compile.  Either change filename extension to
+# .cpp or find the filename in the Compile: field of the file header.
+#class DteCompilecppCommand( sublime_plugin.WindowCommand ) :
+#  #--------------------------------------------------------
+#  def run( self ) :
+#    vw = self.window.active_view()
+#    if not vw.is_scratch() :
+#      if vw.is_dirty():
+#        vw.run_command("save")
+#
+#      fname = self.FindCompileFileName(vw)
+#      if not fname :
+#        fname = vw.file_name()
+#      #Get file name and make sure extension is .cpp.
+#      if fname :
+#        fpath, fext = os.path.splitext(fname)
+#        fname = fpath + '.cpp'
+##        print("opening " + fname)
+#        res = dte.command("File.OpenFile", fname)
+#        if res:
+#          dte.command("Build.Compile", "")
+#        else:
+#          print("Failed to compile " + fname)
+#
   #--------------------------------------------------------
   #Look for Compile: in the header and use the filename indicated by that to compile instead of current file.
-  def FindCompileFileName( self, vw ) :
-    #This may be temporary.  Need to use a comment range perhaps?
-    name = None
-    hr = vw.extract_scope(4)  #We start at offset 4 to skip the // and get to the comment body, otherwise our range in only (0,2) for // and (0,3) for ///
-    lt = vw.substr(hr)
-#    print("testing " + lt)
-    match = compileFileName.search(lt)
-    if (match != None) :
-      name = match.group(1)
-      print("Compile: " + name)
-
-    return name
+#  def FindCompileFileName( self, vw ) :
+#    #This may be temporary.  Need to use a comment range perhaps?
+#    name = None
+#    hr = vw.extract_scope(4)  #We start at offset 4 to skip the // and get to the comment body, otherwise our range in only (0,2) for // and (0,3) for ///
+#    lt = vw.substr(hr)
+##    print("testing " + lt)
+#    match = compileFileName.search(lt)
+#    if (match != None) :
+#      name = match.group(1)
+#      print("Compile: " + name)
+#
+#    return name
 
 #--------------------------------------------------------
 class DteCommandCommand( sublime_plugin.TextCommand ) :
