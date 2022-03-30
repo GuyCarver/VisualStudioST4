@@ -15,6 +15,10 @@ def open( aVersion ):
   return _lib.Open(aVersion)
 
 #--------------------------------------------------------
+def close(  ):
+  _lib.Close()
+
+#--------------------------------------------------------
 def setfile( aPath, aLine ):
   b = _lib.SetFile(aPath, aLine)
   return b

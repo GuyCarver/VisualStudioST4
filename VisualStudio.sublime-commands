@@ -6,8 +6,5 @@
 	{ "command": "dte_command", "args": {"command": "VAssistX.FindSymbolDialog"}, "caption": "VisualStudio: FindSymbol" },
 	{ "command": "dte_toggle_breakpoint", "caption": "VisualStudio: Toggle Breakpoint" },
 	{ "command": "dte_set_file_line", "caption": "VisualStudio: ToVS" },
-	{ "command": "dte_sync_file_line", "caption": "VisualStudio: FromVS" },
-	{ "command": "dte_step_over", "caption": "VisualStudio: StepOver" },
-	{ "command": "dte_step_into", "caption": "VisualStudio: StepInto" },
-	{ "command": "dte_step_out", "caption": "VisualStudio: StepOut" }
+	{ "command": "dte_refresh", "caption": "VisualStudio: Reconnect" },
 ]

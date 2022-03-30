@@ -96,7 +96,14 @@ def SetFileAndLine( aView ) :
   line, _ = aView.rowcol(sel.begin())
   fl = aView.file_name()
 #  print('filename', fl)
+
   res = dte.setfile(fl, line + 1)
+  #If failure, try resetting the connect and try once more
+  if (res == 0):
+    dte.close()
+    plugin_loaded()
+    res = dte.setfile(fl, line + 1)
+
   return res
 
 #--------------------------------------------------------
@@ -144,6 +151,12 @@ class DteSetFileLineCommand( sublime_plugin.TextCommand ) :
   def run( self, edit ) :
     # print("Setting fileandline")
     SetFileAndLine(self.view)
+
+#--------------------------------------------------------
+class DteRefreshCommand( sublime_plugin.WindowCommand ):
+  def run( self ):
+    dte.close()
+    plugin_loaded()
 
 #compileFileName = re.compile("^.*Compile:[ \t]+([\w.]*).*", re.MULTILINE | re.IGNORECASE)
 
